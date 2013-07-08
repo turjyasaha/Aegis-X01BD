@@ -440,4 +440,7 @@ exit:
 EXPORT_SYMBOL(lz4_compress);
 
 MODULE_LICENSE("Dual BSD/GPL");
+EXPORT_SYMBOL_GPL(lz4_compress);
+
+MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("LZ4 compressor");
