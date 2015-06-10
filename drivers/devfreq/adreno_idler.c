@@ -25,6 +25,9 @@
  * calculating idle frequency(mostly by ondemand's method).
  * The higher frequencies are not touched with this algorithm, so high-demanding
  * games will (most likely) not suffer from worsened performance.
+ *
+ * The additional idle_lasttime detects if last 500ms was idle before
+ * ramping down the frequency to prevent micro-lags on scrolling or playing games.
  */
 
 #include <linux/module.h>
@@ -45,7 +48,6 @@ module_param_named(adreno_idler_idleworkload, idleworkload, int, 0664);
    meaning the lower it gets, the slower & low-power it would get. */
 static int idlewaitms = 500;
 module_param_named(adreno_idler_idlewaitms, idlewaitms, int, 0664);
-=======
    Any workload higher than this will be treated as a non-idle workload.
    Adreno idler will more actively try to ramp down the frequency
    if this is set to a higher value. */
@@ -103,6 +105,13 @@ int adreno_idler(struct devfreq_dev_status stats, struct devfreq *devfreq,
 		if (idlecount >= idlewait &&
 		    stats.busy_time * 100 < stats.total_time * downdifferenctial) {
 			/* We are idle for (idlewait + 1)'th time! Ramp down the frequency now. */
+			/* frequency is already at its lowest.
+			   No need to calculate things, so bail out. */
+			return 1;
+		}
+		if (idle_lasttime + idlewaitms <= get_time_inms() &&
+		    stats.busy_time * 100 < stats.total_time * downdifferenctial) {
+			/* We are idle for idlewaitms! Ramp down the frequency now. */
 			*freq = devfreq->profile->freq_table[devfreq->profile->max_state - 1];
 			return 1;
 		}
@@ -111,6 +120,13 @@ int adreno_idler(struct devfreq_dev_status stats, struct devfreq *devfreq,
 		/* Do not return 1 here and allow rest of the algorithm to
 		   figure out the appropriate frequency for current workload.
 		   It can even set it back to the lowest frequency. */
+		/* This is the case where msm-adreno-tz don't use the lowest frequency.
+		   Mimic this behavior by bumping up the frequency. */
+		idle_lasttime = 0;
+		*freq = devfreq->profile->freq_table[devfreq->profile->max_state - 2];
+		/* Do not return 1 here and allow rest of the algorithm to
+		   figure out the appropriate frequency for current workload.
+		   It can even set it back to lowest frequency. */
 	}
 	return 0;
 }
