@@ -19,6 +19,7 @@
 #include "zcomp.h"
 
 static const char * const backends[] = {
+<<<<<<< HEAD
 #ifndef CONFIG_ZRAM_HIDE_LZO
 	"lzo",
 #endif
@@ -36,12 +37,33 @@ static const char * const backends[] = {
 #endif
 #if IS_ENABLED(CONFIG_CRYPTO_ZSTD)
 	"zstd",
+=======
+	"lzo",
+#ifdef CONFIG_ZRAM_LZ4_COMPRESS
+	"lz4",
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
 #endif
 	NULL
 };
 
+<<<<<<< HEAD
 static void zcomp_strm_free(struct zcomp_strm *zstrm)
 {
+=======
+static const char *find_backend(const char *compress)
+{
+	int i = 0;
+	while (backends[i]) {
+		if (sysfs_streq(compress, backends[i]))
+			break;
+		i++;
+	}
+	return backends[i];
+}
+
+static void zcomp_strm_free(struct zcomp_strm *zstrm)
+{
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
 	if (!IS_ERR_OR_NULL(zstrm->tfm))
 		crypto_free_comp(zstrm->tfm);
 	free_pages((unsigned long)zstrm->buffer, 1);
@@ -63,7 +85,11 @@ static struct zcomp_strm *zcomp_strm_alloc(struct zcomp *comp)
 	 * allocate 2 pages. 1 for compressed data, plus 1 extra for the
 	 * case when compressed size is larger than the original one
 	 */
+<<<<<<< HEAD
 	zstrm->buffer = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 1);
+=======
+	zstrm->buffer = (void *)__get_free_pages(flags | __GFP_ZERO, 1);
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
 	if (IS_ERR_OR_NULL(zstrm->tfm) || !zstrm->buffer) {
 		zcomp_strm_free(zstrm);
 		zstrm = NULL;
@@ -98,6 +124,7 @@ ssize_t zcomp_available_show(const char *comp, char *buf)
 	ssize_t sz = 0;
 	int i = 0;
 
+<<<<<<< HEAD
 	for (; backends[i]; i++) {
 		if (!strcmp(comp, backends[i])) {
 			known_algorithm = true;
@@ -107,6 +134,16 @@ ssize_t zcomp_available_show(const char *comp, char *buf)
 			sz += scnprintf(buf + sz, PAGE_SIZE - sz - 2,
 					"%s ", backends[i]);
 		}
+=======
+	while (backends[i]) {
+		if (!strcmp(comp, backends[i]))
+			sz += scnprintf(buf + sz, PAGE_SIZE - sz - 2,
+					"[%s] ", backends[i]);
+		else
+			sz += scnprintf(buf + sz, PAGE_SIZE - sz - 2,
+					"%s ", backends[i]);
+		i++;
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
 	}
 
 	/*
@@ -256,6 +293,10 @@ void zcomp_destroy(struct zcomp *comp)
 struct zcomp *zcomp_create(const char *compress)
 {
 	struct zcomp *comp;
+<<<<<<< HEAD
+=======
+	const char *backend;
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
 	int error;
 
 	if (!zcomp_available_algorithm(compress))
@@ -265,7 +306,11 @@ struct zcomp *zcomp_create(const char *compress)
 	if (!comp)
 		return ERR_PTR(-ENOMEM);
 
+<<<<<<< HEAD
 	comp->name = compress;
+=======
+	comp->name = backend;
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
 	error = zcomp_init(comp);
 	if (error) {
 		kfree(comp);

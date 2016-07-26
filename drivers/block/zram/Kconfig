@@ -1,8 +1,13 @@
 config ZRAM
 	tristate "Compressed RAM block device support"
 	depends on BLOCK && SYSFS && ZSMALLOC && CRYPTO
+<<<<<<< HEAD
 	select CRYPTO_LZ4
 	default y
+=======
+	select CRYPTO_LZO
+	default n
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
 	help
 	  Creates virtual block devices called /dev/zramX (X = 0, 1, ...).
 	  Pages written to these disks are compressed and stored in memory
@@ -40,6 +45,7 @@ config ZRAM_LZ4_COMPRESS
 	help
 	  This option enables LZ4 compression algorithm support. Compression
 	  algorithm can be changed using `comp_algorithm' device attribute.
+<<<<<<< HEAD
 
 config ZRAM_DEFAULT_COMP_ALGORITHM
 	string "Default ZRAM algorithm"
@@ -47,3 +53,5 @@ config ZRAM_DEFAULT_COMP_ALGORITHM
 
 config ZRAM_HIDE_LZO
 	bool "Hide LZO compression algorithm in available compression list"
+=======
+>>>>>>> bf76af5746e1... BACKPORT: zram: switch to crypto compress API
