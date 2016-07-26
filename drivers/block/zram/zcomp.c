@@ -34,9 +34,22 @@ static const char * const backends[] = {
 #endif
 #if IS_ENABLED(CONFIG_CRYPTO_ZSTD)
 	"zstd",
+#ifdef CONFIG_ZRAM_LZ4_COMPRESS
+	"lz4",
 #endif
 	NULL
 };
+
+static const char *find_backend(const char *compress)
+{
+	int i = 0;
+	while (backends[i]) {
+		if (sysfs_streq(compress, backends[i]))
+			break;
+		i++;
+	}
+	return backends[i];
+}
 
 static void zcomp_strm_free(struct zcomp_strm *zstrm)
 {
@@ -62,6 +75,7 @@ static struct zcomp_strm *zcomp_strm_alloc(struct zcomp *comp)
 	 * case when compressed size is larger than the original one
 	 */
 	zstrm->buffer = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 1);
+	zstrm->buffer = (void *)__get_free_pages(flags | __GFP_ZERO, 1);
 	if (IS_ERR_OR_NULL(zstrm->tfm) || !zstrm->buffer) {
 		zcomp_strm_free(zstrm);
 		zstrm = NULL;
@@ -105,6 +119,14 @@ ssize_t zcomp_available_show(const char *comp, char *buf)
 			sz += scnprintf(buf + sz, PAGE_SIZE - sz - 2,
 					"%s ", backends[i]);
 		}
+	while (backends[i]) {
+		if (!strcmp(comp, backends[i]))
+			sz += scnprintf(buf + sz, PAGE_SIZE - sz - 2,
+					"[%s] ", backends[i]);
+		else
+			sz += scnprintf(buf + sz, PAGE_SIZE - sz - 2,
+					"%s ", backends[i]);
+		i++;
 	}
 
 	/*
@@ -254,6 +276,7 @@ void zcomp_destroy(struct zcomp *comp)
 struct zcomp *zcomp_create(const char *compress)
 {
 	struct zcomp *comp;
+	const char *backend;
 	int error;
 
 	if (!zcomp_available_algorithm(compress))
@@ -264,6 +287,7 @@ struct zcomp *zcomp_create(const char *compress)
 		return ERR_PTR(-ENOMEM);
 
 	comp->name = compress;
+	comp->name = backend;
 	error = zcomp_init(comp);
 	if (error) {
 		kfree(comp);
