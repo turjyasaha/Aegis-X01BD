@@ -788,7 +788,11 @@ static ssize_t comp_algorithm_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t len)
 {
 	struct zram *zram = dev_to_zram(dev);
+<<<<<<< HEAD
 	char compressor[ARRAY_SIZE(zram->compressor)];
+=======
+	char compressor[CRYPTO_MAX_ALG_NAME];
+>>>>>>> f44a2bb4f7a1... UPSTREAM: zram: use crypto api to check alg availability
 	size_t sz;
 
 	strlcpy(compressor, buf, sizeof(compressor));
@@ -807,7 +811,11 @@ static ssize_t comp_algorithm_store(struct device *dev,
 		return -EBUSY;
 	}
 
+<<<<<<< HEAD
 	strcpy(zram->compressor, compressor);
+=======
+	strlcpy(zram->compressor, compressor, sizeof(compressor));
+>>>>>>> f44a2bb4f7a1... UPSTREAM: zram: use crypto api to check alg availability
 	up_write(&zram->init_lock);
 	return len;
 }
