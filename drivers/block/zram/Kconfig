@@ -13,7 +13,6 @@ config ZRAM
 
 	  It has several use cases, for example: /tmp storage, use as swap
 	  disks and maybe many more.
-
 	  See Documentation/blockdev/zram.txt for more information.
 
 config ZRAM_WRITEBACK
