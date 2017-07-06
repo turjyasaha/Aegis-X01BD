@@ -13608,7 +13608,7 @@ static ssize_t headphone_gain_store(struct kobject *kobj,
 	if (input_l < -10 || input_l > 20)
 		input_l = 0;
 
-	if (input_r < -10 || input_r > 20)
+	if (input_r < -84 || input_r > 20)
 		input_r = 0;
 
 	snd_soc_write(sound_control_codec_ptr, WCD9335_CDC_RX1_RX_VOL_MIX_CTL, input_l);
@@ -13684,6 +13684,8 @@ static struct attribute *sound_control_attrs[] = {
 		&earpiece_gain_attribute.attr,
 static struct attribute *sound_control_attrs[] = {
 		&headphone_gain_attribute.attr,
+		&mic_gain_attribute.attr,
+		&earpiece_gain_attribute.attr,
 		NULL,
 };
 
