@@ -372,7 +372,7 @@ __releases(&port->port_lock)
 __acquires(&port->port_lock)
 */
 {
-	struct list_head	*pool;
+	struct list_head	*pool = &port->write_pool;
 	struct usb_ep		*in;
 	int			status = 0;
 	static long		prev_len;
@@ -385,6 +385,11 @@ __acquires(&port->port_lock)
 
 	pool = &port->write_pool;
 	in   = port->port_usb->in;
+
+	if (!port->port_usb)
+		return status;
+
+	in = port->port_usb->in;
 
 	while (!port->write_busy && !list_empty(pool)) {
 		struct usb_request	*req;

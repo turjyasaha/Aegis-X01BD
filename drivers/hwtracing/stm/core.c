@@ -402,12 +402,14 @@ static int stm_char_release(struct inode *inode, struct file *file)
 				  stmf->output.channel);
 
 	stm_output_free(stm, &stmf->output);
+	stm_output_free(stmf->stm, &stmf->output);
 
 	/*
 	 * matches the stm_char_open()'s
 	 * class_find_device() + try_module_get()
 	 */
 	stm_put_device(stm);
+	stm_put_device(stmf->stm);
 	kfree(stmf);
 
 	return 0;
@@ -864,7 +866,6 @@ static int __stm_source_link_drop(struct stm_source_device *src,
 {
 	struct stm_device *link;
 	int ret = 0;
-
 	lockdep_assert_held(&stm->link_mutex);
 
 	/* for stm::link_list modification, we hold both mutex and spinlock */
@@ -904,6 +905,9 @@ unlock:
 			stm->data->unlink(stm->data, src->output.master,
 					  src->output.channel);
 	}
+
+	if (!ret && src->data->unlink)
+		src->data->unlink(src->data);
 
 	return ret;
 }
