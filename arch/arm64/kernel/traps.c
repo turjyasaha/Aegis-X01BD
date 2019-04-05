@@ -300,12 +300,6 @@ static unsigned long oops_begin(void)
 	}
 	die_nest_count++;
 	die_owner = cpu;
-
-	struct thread_info *thread = current_thread_info();
-	int ret;
-	unsigned long flags;
-	raw_spin_lock_irqsave(&die_lock, flags);
-	oops_enter();
 	console_verbose();
 	bust_spinlocks(1);
 	return flags;
@@ -330,11 +324,8 @@ static void oops_end(unsigned long flags, struct pt_regs *regs, int notify)
 		panic("Fatal exception in interrupt");
 	if (panic_on_oops)
 		panic("Fatal exception");
+
 	if (notify != NOTIFY_STOP)
-
-	raw_spin_unlock_irqrestore(&die_lock, flags);
-
-	if (ret != NOTIFY_STOP)
 		do_exit(SIGSEGV);
 }
 

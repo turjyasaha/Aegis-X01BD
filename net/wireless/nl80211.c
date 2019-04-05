@@ -12421,8 +12421,6 @@ void nl80211_send_connect_result(struct cfg80211_registered_device *rdev,
 	msg = nlmsg_new(100 + cr->req_ie_len + cr->resp_ie_len +
 			cr->fils_kek_len + cr->pmk_len +
 			(cr->pmkid ? WLAN_PMKID_LEN : 0), gfp);
-
-	msg = nlmsg_new(100 + req_ie_len + resp_ie_len, gfp);
 	if (!msg)
 		return;
 

@@ -547,7 +547,7 @@ static int mmc_decode_ext_csd(struct mmc_card *card, u8 *ext_csd)
 					mmc_hostname(card->host),
 					card->ext_csd.bkops_en);
 
-			if (!card->ext_csd.man_bkops_en)
+			if (!card->ext_csd.bkops_en)
 				pr_debug("%s: MAN_BKOPS_EN bit is not set\n",
 					mmc_hostname(card->host));
 
