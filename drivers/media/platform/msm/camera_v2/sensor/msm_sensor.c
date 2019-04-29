@@ -19,6 +19,7 @@
 #include <linux/regulator/consumer.h>
 /* Huaqin modify for ID Pin differentiation by lizihao at 2018/05/29 start*/
 #include <linux/gpio.h>
+#include <linux/drv2624.h>
 
 #define SUB_CAM_ID_PIN 55
 /* Huaqin modify for ID Pin differentiation by lizihao at 2018/05/29 end*/
@@ -146,6 +147,8 @@ int msm_sensor_power_down(struct msm_sensor_ctrl_t *s_ctrl)
 		return -EINVAL;
 	}
 
+	drv2624_enable_haptics();
+
 	/* Power down secure session if it exist*/
 	if (s_ctrl->is_secure)
 		msm_camera_tz_i2c_power_down(sensor_i2c_client);
@@ -223,6 +226,11 @@ int msm_sensor_power_up(struct msm_sensor_ctrl_t *s_ctrl)
 			break;
 		}
 	}
+
+	if (!rc)
+		drv2624_disable_haptics();
+
+	print_time(__func__, sensor_name);
 
 	return rc;
 }
