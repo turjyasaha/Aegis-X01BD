@@ -478,7 +478,6 @@ config TCP_CONG_BIC
 	increase provides TCP friendliness.
 	See http://www.csc.ncsu.edu/faculty/rhee/export/bitcp/
 
-<<<<<<< HEAD
 config TCP_CONG_CUBIC
 	tristate "CUBIC TCP"
 	default y
@@ -489,11 +488,9 @@ config TCP_CONG_CUBIC
 
 config TCP_CONG_WESTWOOD
 	tristate "TCP Westwood+"
-=======
 config TCP_CONG_WESTWOOD
 	tristate "TCP Westwood+"
 	depends on INET
->>>>>>> 8727076289ec... [TCP]: Add TCP Westwood congestion control module.
 	default m
 	---help---
 	TCP Westwood+ is a sender-side only modification of the TCP Reno
@@ -506,7 +503,6 @@ config TCP_CONG_WESTWOOD
 	TCP Westwood+ significantly increases fairness wrt TCP Reno in
 	wired networks and throughput over wireless links.
 
-<<<<<<< HEAD
 config TCP_CONG_HTCP
         tristate "H-TCP"
         default m
@@ -654,9 +650,7 @@ choice
 
 	config DEFAULT_HTCP
 		bool "Htcp" if TCP_CONG_HTCP=y
-=======
 endmenu
->>>>>>> 8727076289ec... [TCP]: Add TCP Westwood congestion control module.
 
 	config DEFAULT_HYBLA
 		bool "Hybla" if TCP_CONG_HYBLA=y
