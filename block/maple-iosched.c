@@ -29,7 +29,7 @@ static const int sync_write_expire = 550;	/* max time before a write sync is sub
 static const int async_read_expire = 250;	/* ditto for read async, these limits are SOFT! */
 static const int async_write_expire = 450;	/* ditto for write async, these limits are SOFT! */
 static const int fifo_batch = 16;		/* # of sequential requests treated as one by the above parameters. */
-static const int writes_starved = 1;		/* max times reads can starve a write */
+static const int writes_starved = 4;		/* max times reads can starve a write */
 static const int sleep_latency_multiple = 10;	/* multple for expire time when device is asleep */
 
 /* Elevator data */
@@ -90,17 +90,6 @@ maple_add_request(struct request_queue *q, struct request *rq)
 	 * Add request to the proper fifo list and set its
 	 * expire time.
 	 */
-
-   	/* inrease expiration when device is asleep */
-   	unsigned int fifo_expire_suspended = mdata->fifo_expire[sync][dir] * sleep_latency_multiple;
-   	if (mdata->display_on && mdata->fifo_expire[sync][dir]) {
-        rq->fifo_time = jiffies + mdata->fifo_expire[sync][dir];
-   		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
-   	} else if (!mdata->display_on && fifo_expire_suspended) {
-        rq->fifo_time = jiffies + fifo_expire_suspended;
-   		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
-   	}
-	if (!state_suspended && mdata->fifo_expire[sync][dir]) {
 	if (mdata->display_on && mdata->fifo_expire[sync][dir]) {
 		rq->fifo_time = jiffies + mdata->fifo_expire[sync][dir];
 		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
@@ -285,15 +274,6 @@ static int fb_notifier_callback(struct notifier_block *self,
 	if (evdata && evdata->data && event == FB_EVENT_BLANK) {
 		blank = evdata->data;
 		switch (*blank) {
-			case FB_BLANK_UNBLANK:
-				mdata->display_on = 1;
-				break;
-			case FB_BLANK_POWERDOWN:
-			case FB_BLANK_HSYNC_SUSPEND:
-			case FB_BLANK_VSYNC_SUSPEND:
-			case FB_BLANK_NORMAL:
-				mdata->display_on = 0;
-				break;
 		case FB_BLANK_UNBLANK:
 			mdata->display_on = 1;
 			break;
