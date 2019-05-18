@@ -10,6 +10,8 @@
 #include <linux/init.h>
 
 #define MAX_WRITES_STARVED 12
+/* Max times reads can starve a write */
+#define	DEFAULT_MAX_WRITES_STARVED	(4)
 
 enum {ASYNC, SYNC};
 
