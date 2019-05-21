@@ -75,6 +75,18 @@ static struct request *anxiety_former_request(struct request_queue *q, struct re
 	const uint8_t sync = rq_is_sync(rq);
 	const uint8_t read = rq_data_dir(rq);
 	if (rq->queuelist.prev == &((struct anxiety_data *) q->elevator->elevator_data)->queue[sync][read])
+static void anxiety_add_request(struct request_queue *q, struct request *rq)
+{
+	const uint8_t dir = rq_is_sync(rq);
+
+	list_add_tail(&rq->queuelist, &((struct anxiety_data *) q->elevator->elevator_data)->queue[dir]);
+}
+
+static struct request *anxiety_former_request(struct request_queue *q, struct request *rq)
+{
+	const uint8_t dir = rq_is_sync(rq);
+
+	if (rq->queuelist.prev == &((struct anxiety_data *) q->elevator->elevator_data)->queue[dir])
 		return NULL;
 	return list_prev_entry(rq, queuelist);
 }
@@ -83,6 +95,11 @@ static struct request *anxiety_latter_request(struct request_queue *q, struct re
 	const uint8_t sync = rq_is_sync(rq);
 	const uint8_t read = rq_data_dir(rq);
 	if (rq->queuelist.next == &((struct anxiety_data *) q->elevator->elevator_data)->queue[sync][read])
+static struct request *anxiety_latter_request(struct request_queue *q, struct request *rq)
+{
+	const uint8_t dir = rq_is_sync(rq);
+
+	if (rq->queuelist.next == &((struct anxiety_data *) q->elevator->elevator_data)->queue[dir])
 		return NULL;
 	return list_next_entry(rq, queuelist);
 }
