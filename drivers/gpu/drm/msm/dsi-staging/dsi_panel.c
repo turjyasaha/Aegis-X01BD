@@ -21,6 +21,19 @@
 #include "dsi_panel.h"
 #include "dsi_ctrl_hw.h"
 
+#ifdef CONFIG_KLAPSE
+#include <linux/klapse.h>
+#endif
+
+/**
+ * topology is currently defined by a set of following 3 values:
+ * 1. num of layer mixers
+ * 2. num of compression encoders
+ * 3. num of interfaces
+ */
+#define TOPOLOGY_SET_LEN 3
+#define MAX_TOPOLOGY 5
+
 #define DSI_PANEL_DEFAULT_LABEL  "Default dsi panel"
 
 #define DEFAULT_MDP_TRANSFER_TIME 14000
