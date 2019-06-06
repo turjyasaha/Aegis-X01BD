@@ -48,6 +48,7 @@ static void do_input_boost_rem(struct work_struct *work)
 
 static void do_input_boost(struct work_struct *work)
 {
+<<<<<<< HEAD
 	if (!cancel_delayed_work_sync(&input_boost_rem)) {
 		if (!input_stune_boost_active) {
 			input_stune_boost_active = !do_stune_boost("top-app",
@@ -57,6 +58,10 @@ static void do_input_boost(struct work_struct *work)
 			do_prefer_idle("foreground", 1);
 		}
 	}
+=======
+	if (!cancel_delayed_work_sync(&input_boost_rem) && !input_stune_boost_active)
+		set_boost(true);
+>>>>>>> 951da9ea6db5... cpufreq: dsboost: Combine conditional
 
 	queue_delayed_work(dsboost_wq, &input_boost_rem,
 					msecs_to_jiffies(input_boost_duration));
