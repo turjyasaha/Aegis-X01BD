@@ -229,9 +229,6 @@ int msm_sensor_power_up(struct msm_sensor_ctrl_t *s_ctrl)
 
 	if (!rc)
 		drv2624_disable_haptics();
-
-	print_time(__func__, sensor_name);
-
 	return rc;
 }
 
