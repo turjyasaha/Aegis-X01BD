@@ -76,8 +76,8 @@
 #include <linux/jiffies.h>
 #include <linux/rbtree.h>
 #include <linux/ioprio.h>
-#include "bfq.h"
 #include "blk.h"
+#include "bfq.h"
 
 /* Expiration time of sync (0) and async (1) requests, in ns. */
 static const u64 bfq_fifo_expire[2] = { NSEC_PER_SEC / 4, NSEC_PER_SEC / 8 };
@@ -2267,9 +2267,6 @@ static void bfq_arm_slice_timer(struct bfq_data *bfqd)
 	hrtimer_start(&bfqd->idle_slice_timer, ns_to_ktime(sl),
 		      HRTIMER_MODE_REL);
 	bfqg_stats_set_start_idle_time(bfqq_group(bfqq));
-	bfq_log(bfqd, "arm idle: %llu/%llu ns",
-		div_u64(sl, NSEC_PER_MSEC),
-		div_u64(bfqd->bfq_slice_idle, NSEC_PER_MSEC));
 	bfq_log(bfqd, "arm idle: %ld/%ld ms",
 		sl / NSEC_PER_MSEC, bfqd->bfq_slice_idle / NSEC_PER_MSEC);
 }
@@ -2909,9 +2906,6 @@ static bool bfq_bfqq_is_slow(struct bfq_data *bfqd, struct bfq_queue *bfqq,
 		return slow;
 	}
 
-	delta_ms_tmp = delta_usecs;
-	do_div(delta_ms_tmp, 1000);
-	*delta_ms = delta_ms_tmp;
 	*delta_ms = delta_usecs / USEC_PER_MSEC;
 
 	/*
@@ -2919,78 +2913,6 @@ static bool bfq_bfqq_is_slow(struct bfq_data *bfqd, struct bfq_queue *bfqq,
 	 * spikes in service rate estimation.
 	 */
 	if (delta_usecs > 20000) {
-		bool fully_sequential = bfqq->seek_history == 0;
-		/*
-		 * Soft real-time queues are not good candidates for
-		 * evaluating bw, as they are likely to be slow even
-		 * if sequential.
-		 */
-		bool non_soft_rt = bfqq->wr_coeff == 1 ||
-			bfqq->wr_cur_max_time != bfqd->bfq_wr_rt_max_time;
-		bool consumed_large_budget =
-			reason == BFQ_BFQQ_BUDGET_EXHAUSTED &&
-			bfqq->entity.budget >= bfqd->bfq_max_budget * 2 / 3;
-		bool served_for_long_time =
-			reason == BFQ_BFQQ_BUDGET_TIMEOUT ||
-			consumed_large_budget;
-
-		BUG_ON(bfqq->seek_history == 0 &&
-		       hweight32(bfqq->seek_history) != 0);
-
-		if (bw > bfqd->peak_rate ||
-		    (bfq_bfqq_sync(bfqq) && fully_sequential && non_soft_rt &&
-		     served_for_long_time)) {
-			/*
-			 * To smooth oscillations use a low-pass filter with
-			 * alpha=9/10, i.e.,
-			 * new_rate = (9/10) * old_rate + (1/10) * bw
-			 */
-			bwdiv10 = bw;
-			do_div(bwdiv10, 10);
-			if (bwdiv10 == 0)
-				return false; /* bw too low to be used */
-			bfqd->peak_rate *= 9;
-			do_div(bfqd->peak_rate, 10);
-			bfqd->peak_rate += bwdiv10;
-			update = 1;
-			bfq_log(bfqd, "new peak_rate = %llu sects/sec",
-				(1000000*bfqd->peak_rate)>>BFQ_RATE_SHIFT);
-		}
-
-		update |= bfqd->peak_rate_samples == BFQ_PEAK_RATE_SAMPLES - 1;
-
-		if (bfqd->peak_rate_samples < BFQ_PEAK_RATE_SAMPLES)
-			bfqd->peak_rate_samples++;
-
-		if (bfqd->peak_rate_samples == BFQ_PEAK_RATE_SAMPLES &&
-		    update) {
-			int dev_type = blk_queue_nonrot(bfqd->queue);
-			if (bfqd->bfq_user_max_budget == 0) {
-				bfqd->bfq_max_budget =
-					bfq_calc_max_budget(bfqd);
-				bfq_log(bfqd, "new max_budget = %d",
-					bfqd->bfq_max_budget);
-			}
-			if (bfqd->device_speed == BFQ_BFQD_FAST &&
-			    bfqd->peak_rate < device_speed_thresh[dev_type]) {
-				bfqd->device_speed = BFQ_BFQD_SLOW;
-				bfqd->RT_prod = R_slow[dev_type] *
-						T_slow[dev_type];
-			} else if (bfqd->device_speed == BFQ_BFQD_SLOW &&
-			    bfqd->peak_rate > device_speed_thresh[dev_type]) {
-				bfqd->device_speed = BFQ_BFQD_FAST;
-				bfqd->RT_prod = R_fast[dev_type] *
-						T_fast[dev_type];
-			}
-			bfq_log(bfqd,
-		"dev_speed_class = %d (%d sects/sec), thresh %d setcs/sec",
-				bfqd->device_speed,
-				bfqd->device_speed == BFQ_BFQD_FAST ?
-				(1000000*R_fast[dev_type])>>BFQ_RATE_SHIFT :
-				(1000000*R_slow[dev_type])>>BFQ_RATE_SHIFT,
-				(1000000*device_speed_thresh[dev_type])>>
-				BFQ_RATE_SHIFT);
-		}
 		/*
 		 * Caveat for rotational devices: processes doing I/O
 		 * in the slower disk zones tend to be slow(er) even
@@ -4038,7 +3960,6 @@ static void bfq_check_ioprio_change(struct bfq_io_cq *bic, struct bio *bio)
 	bfqq = bic_to_bfqq(bic, false);
 	if (bfqq) {
 		bfq_put_queue(bfqq);
-		bfqq = bfq_get_queue(bfqd, bio, BLK_RW_ASYNC, bic, GFP_ATOMIC);
 		bfqq = bfq_get_queue(bfqd, bio, BLK_RW_ASYNC, bic);
 		bic_set_bfqq(bic, bfqq, false);
 		bfq_log_bfqq(bfqd, bfqq,
