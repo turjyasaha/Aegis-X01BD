@@ -13580,7 +13580,6 @@ static struct regulator *tasha_codec_find_ondemand_regulator(
 
 #ifdef CONFIG_SOUND_CONTROL
 static struct snd_soc_codec *sound_control_codec_ptr;
-struct snd_soc_codec *sound_control_codec_ptr;
 
 static ssize_t headphone_gain_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
@@ -13588,8 +13587,6 @@ static ssize_t headphone_gain_show(struct kobject *kobj,
 	return snprintf(buf, PAGE_SIZE, "%d %d\n",
 		snd_soc_read(sound_control_codec_ptr, WCD9335_CDC_RX1_RX_VOL_MIX_CTL),
 		snd_soc_read(sound_control_codec_ptr, WCD9335_CDC_RX2_RX_VOL_MIX_CTL)
-		snd_soc_read(sound_control_codec_ptr, WCD9335_CDC_RX1_RX_VOL_CTL),
-		snd_soc_read(sound_control_codec_ptr, WCD9335_CDC_RX2_RX_VOL_CTL)
 	);
 }
 
@@ -13602,10 +13599,6 @@ static ssize_t headphone_gain_store(struct kobject *kobj,
 	sscanf(buf, "%d %d", &input_l, &input_r);
 
 	if (input_l < -84 || input_l > 20)
-		input_l = 0;
-
-	if (input_r < -84 || input_r > 20)
-	if (input_l < -10 || input_l > 20)
 		input_l = 0;
 
 	if (input_r < -84 || input_r > 20)
@@ -13678,10 +13671,6 @@ static struct kobj_attribute earpiece_gain_attribute =
 		earpiece_gain_show,
 		earpiece_gain_store);
 
-static struct attribute *sound_control_attrs[] = {
-		&headphone_gain_attribute.attr,
-		&mic_gain_attribute.attr,
-		&earpiece_gain_attribute.attr,
 static struct attribute *sound_control_attrs[] = {
 		&headphone_gain_attribute.attr,
 		&mic_gain_attribute.attr,
