@@ -440,10 +440,7 @@ static ssize_t kcal_enable_store(struct device *dev,
 		mdss_mdp_kcal_update_pcc(lut_data);
 		mdss_mdp_kcal_update_pa(lut_data);
 		//mdss_mdp_kcal_update_igc(lut_data);
-<<<<<<< HEAD
 		mdss_mdp_kcal_update_igc(lut_data);
-=======
->>>>>>> 51727f6de155... msm: mdss: KCAL: disable igc update
 	} else
 		lut_data->queue_changes = true;
 
@@ -471,15 +468,12 @@ static ssize_t kcal_invert_store(struct device *dev,
 
 	//disable
 	lut_data->invert = 0;
-<<<<<<< HEAD
 	lut_data->invert = kcal_invert;
 
 	if (mdss_mdp_kcal_is_panel_on())
 		mdss_mdp_kcal_update_igc(lut_data);
 	else
 		lut_data->queue_changes = true;
-=======
->>>>>>> 51727f6de155... msm: mdss: KCAL: disable igc update
 
 	return count;
 }
