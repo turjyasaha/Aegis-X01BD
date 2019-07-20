@@ -556,9 +556,9 @@ out_notify:
 		__cpu_notify(CPU_UP_CANCELED | mod, hcpu, nr_calls, NULL);
 out:
 	cpu_hotplug_done();
+	arch_smt_update();
 	trace_sched_cpu_hotplug(cpu, ret, 1);
 
-	arch_smt_update();
 	return ret;
 }
 
@@ -858,21 +858,6 @@ static DECLARE_BITMAP(cpu_isolated_bits, CONFIG_NR_CPUS) __read_mostly;
 const struct cpumask *const cpu_isolated_mask = to_cpumask(cpu_isolated_bits);
 EXPORT_SYMBOL(cpu_isolated_mask);
 
-/*
- * This assumes that half of the CPUs are little and that they have lower
- * CPU numbers than the big CPUs (e.g., on an 8-core system, CPUs 0-3 would be
- * little and CPUs 4-7 would be big).
- */
-#define LITTLE_CPU_MASK ((1UL << (NR_CPUS / 2)) - 1)
-#define BIG_CPU_MASK    (((1UL << NR_CPUS) - 1) & ~LITTLE_CPU_MASK)
-static const unsigned long little_cluster_cpus = LITTLE_CPU_MASK;
-const struct cpumask *const cpu_lp_mask = to_cpumask(&little_cluster_cpus);
-EXPORT_SYMBOL(cpu_lp_mask);
-
-static const unsigned long big_cluster_cpus = BIG_CPU_MASK;
-const struct cpumask *const cpu_perf_mask = to_cpumask(&big_cluster_cpus);
-EXPORT_SYMBOL(cpu_perf_mask);
-
 void set_cpu_possible(unsigned int cpu, bool possible)
 {
 	if (possible)
@@ -930,6 +915,22 @@ void init_cpu_online(const struct cpumask *src)
 	cpumask_copy(to_cpumask(cpu_online_bits), src);
 }
 
+enum cpu_mitigations cpu_mitigations = CPU_MITIGATIONS_AUTO;
+
+static int __init mitigations_parse_cmdline(char *arg)
+{
+	if (!strcmp(arg, "off"))
+		cpu_mitigations = CPU_MITIGATIONS_OFF;
+	else if (!strcmp(arg, "auto"))
+		cpu_mitigations = CPU_MITIGATIONS_AUTO;
+	else
+		pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
+			arg);
+
+	return 0;
+}
+early_param("mitigations", mitigations_parse_cmdline);
+
 void init_cpu_isolated(const struct cpumask *src)
 {
 	cpumask_copy(to_cpumask(cpu_isolated_bits), src);
@@ -954,18 +955,3 @@ void idle_notifier_call_chain(unsigned long val)
 	atomic_notifier_call_chain(&idle_notifier, val, NULL);
 }
 EXPORT_SYMBOL_GPL(idle_notifier_call_chain);
-enum cpu_mitigations cpu_mitigations = CPU_MITIGATIONS_AUTO;
-
-static int __init mitigations_parse_cmdline(char *arg)
-{
-	if (!strcmp(arg, "off"))
-		cpu_mitigations = CPU_MITIGATIONS_OFF;
-	else if (!strcmp(arg, "auto"))
-		cpu_mitigations = CPU_MITIGATIONS_AUTO;
-	else
-		pr_crit("Unsupported mitigations=%s, system may still be vulnerable\n",
-			arg);
-
-	return 0;
-}
-early_param("mitigations", mitigations_parse_cmdline);

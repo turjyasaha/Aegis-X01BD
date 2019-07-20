@@ -2465,6 +2465,7 @@ sd_read_write_protect_flag(struct scsi_disk *sdkp, unsigned char *buffer)
 				  "Mode Sense: %02x %02x %02x %02x\n",
 				  buffer[0], buffer[1], buffer[2], buffer[3]);
 		}
+		set_disk_ro(sdkp->disk, sdkp->write_prot);
 	}
 }
 

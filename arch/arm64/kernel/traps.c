@@ -324,7 +324,6 @@ static void oops_end(unsigned long flags, struct pt_regs *regs, int notify)
 		panic("Fatal exception in interrupt");
 	if (panic_on_oops)
 		panic("Fatal exception");
-
 	if (notify != NOTIFY_STOP)
 		do_exit(SIGSEGV);
 }
