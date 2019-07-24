@@ -498,11 +498,6 @@ static void fiops_insert_request(struct request_queue *q, struct request *rq)
  * scheduler run of queue, if there are requests pending and no one in the
  * driver that will restart queueing
  */
-static inline void fiops_schedule_dispatch(struct fiops_data *fiopsd)
-{
-	if (fiopsd->busy_queues)
-		kblockd_schedule_work(fiopsd->queue, &fiopsd->unplug_work);
-}
 
 static void fiops_completed_request(struct request_queue *q, struct request *rq)
 {
@@ -514,9 +509,6 @@ static void fiops_completed_request(struct request_queue *q, struct request *rq)
 
 	fiops_log_ioc(fiopsd, ioc, "in_flight %d, busy queues %d",
 		ioc->in_flight, fiopsd->busy_queues);
-
-	if (fiopsd->in_flight[0] + fiopsd->in_flight[1] == 0)
-		fiops_schedule_dispatch(fiopsd);
 }
 
 static struct request *
@@ -528,7 +520,7 @@ fiops_find_rq_fmerge(struct fiops_data *fiopsd, struct bio *bio)
 	cic = fiops_cic_lookup(fiopsd, tsk->io_context);
 
 	if (cic) {
-		sector_t sector = bio->bi_sector + bio_sectors(bio);
+		sector_t sector = bio->bi_error + bio_sectors(bio);
 
 		return elv_rb_find(&cic->sort_list, sector);
 	}
