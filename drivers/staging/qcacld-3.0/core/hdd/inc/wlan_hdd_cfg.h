@@ -16422,7 +16422,6 @@ struct hdd_config {
 	uint32_t btm_sticky_time;
 	uint32_t btm_query_bitmask;
 	uint16_t beacon_reporting;
-
 	bool pktcap_mode_enable;
 	uint8_t pktcapture_mode;
 };

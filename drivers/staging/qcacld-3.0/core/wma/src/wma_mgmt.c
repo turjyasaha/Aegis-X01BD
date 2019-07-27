@@ -2183,6 +2183,7 @@ void wma_set_stakey(tp_wma_handle wma_handle, tpSetStaKeyParams key_info)
 		key_params.key_len = key_info->key[i].keyLength;
 		status = wma_setup_install_key_cmd(wma_handle, &key_params,
 						   opmode);
+		qdf_mem_zero(&key_params, sizeof(struct wma_set_key_params));
 		if (status == QDF_STATUS_E_NOMEM) {
 			WMA_LOGE("%s:Failed to setup install key buf",
 				 __func__);

@@ -384,7 +384,6 @@ typedef enum {
     HTT_STATS_LATENCY_PROF_STATS_TAG               = 91, /* htt_latency_prof_stats_tlv */
     HTT_STATS_LATENCY_CTX_TAG                      = 92, /* htt_latency_prof_ctx_tlv */
     HTT_STATS_LATENCY_CNT_TAG                      = 93, /* htt_latency_prof_cnt_tlv */
-
     HTT_STATS_MAX_TAG,
 } htt_tlv_tag_t;
 
@@ -615,6 +614,8 @@ typedef struct {
     A_UINT32 next_seq_cancel;
     /* Num of times fes offset was misaligned */
     A_UINT32 fes_offsets_err_cnt;
+=======
+>>>>>>> 9e41580d6c9fb2d5d896fef5ac5403a12d882d00
 } htt_tx_pdev_stats_cmn_tlv;
 
 #define HTT_TX_PDEV_STATS_URRN_TLV_SZ(_num_elems) (sizeof(A_UINT32) * (_num_elems))
@@ -772,7 +773,6 @@ typedef struct {
     A_UINT32 phy_warm_reset_reason_wal_rx_recovery_rst_rx_busy;
     A_UINT32 phy_warm_reset_reason_wal_rx_recovery_rst_mac_hang;
     A_UINT32 phy_warm_reset_reason_mac_reset_converted_phy_reset;
-
     A_UINT32 wal_rx_recovery_rst_mac_hang_count;
     A_UINT32 wal_rx_recovery_rst_known_sig_count;
     A_UINT32 wal_rx_recovery_rst_no_rx_count;
@@ -1231,7 +1231,6 @@ typedef struct _htt_rx_peer_rate_stats_tlv {
      */
     A_UINT32 per_chain_rssi_pkt_type;
     A_INT8   rx_per_chain_rssi_in_dbm[HTT_RX_PEER_STATS_NUM_SPATIAL_STREAMS][HTT_RX_PEER_STATS_NUM_BW_COUNTERS];
-
     A_UINT32 rx_ulmumimo_non_data_ppdu;   /* ppdu level */
     A_UINT32 rx_ulmumimo_data_ppdu;       /* ppdu level */
     A_UINT32 rx_ulmumimo_mpdu_ok;         /* mpdu level */
@@ -3110,7 +3109,6 @@ typedef struct {
     A_UINT32 rx_br_poll;
     A_UINT32 rx_11ax_dl_ofdma_mcs[HTT_RX_PDEV_STATS_NUM_MCS_COUNTERS];
     A_UINT32 rx_11ax_dl_ofdma_ru[HTT_RX_PDEV_STATS_NUM_RU_SIZE_COUNTERS];
-
     A_UINT32 rx_ulmumimo_non_data_ppdu[HTT_RX_PDEV_MAX_ULMUMIMO_NUM_USER]; /* ppdu level */
     A_UINT32 rx_ulmumimo_data_ppdu[HTT_RX_PDEV_MAX_ULMUMIMO_NUM_USER];     /* ppdu level */
     A_UINT32 rx_ulmumimo_mpdu_ok[HTT_RX_PDEV_MAX_ULMUMIMO_NUM_USER];       /* mpdu level */

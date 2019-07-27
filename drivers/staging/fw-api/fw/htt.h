@@ -189,6 +189,11 @@
  */
 #define HTT_CURRENT_VERSION_MAJOR 3
 #define HTT_CURRENT_VERSION_MINOR 67
+ * 3.62 Add antenna mask to reserved space in htt_rx_ind_hl_rx_desc_t
+ */
+#define HTT_CURRENT_VERSION_MAJOR 3
+#define HTT_CURRENT_VERSION_MINOR 62
+>>>>>>> 9e41580d6c9fb2d5d896fef5ac5403a12d882d00
 
 #define HTT_NUM_TX_FRAG_DESC  1024
 
@@ -4797,6 +4802,9 @@ enum htt_srng_ring_id {
  *    |31 28|27|26|25|24|23            16|15          |9 8|7             0|
  *    |-----+--+--+--+--+----------------+------------+---+---------------|
  *    |rsvd1|DT|OV|PS|SS|     ring_id    |     pdev_id    |    msg_type   |
+ *    |31    27|26|25|24|23            16|15             8|7             0|
+ *    |-----------------+----------------+----------------+---------------|
+ *    |  rsvd1 |OV|PS|SS|     ring_id    |     pdev_id    |    msg_type   |
  *    |-------------------------------------------------------------------|
  *    |              rsvd2               |           ring_buffer_size     |
  *    |-------------------------------------------------------------------|
@@ -4844,6 +4852,7 @@ enum htt_srng_ring_id {
  *          b'27    - drop_thresh_valid (DT): flag to indicate if the
  *                    rx_drop_threshold field is valid
  *          b'28:31 - rsvd1:  reserved for future use
+ *          b'27:31 - rsvd1:  reserved for future use
  * dword1 - b'0:16  - ring_buffer_size: size of bufferes referenced by rx ring,
  *                    in byte units.
  *                    Valid only for HW_TO_SW_RING and SW_TO_HW_RING
@@ -4903,6 +4912,7 @@ enum htt_srng_ring_id {
  *                    Refer to BUF_RING_CFG_3 defs within HW .h files,
  *                    e.g. wmac_top_reg_seq_hwioreg.h
  * dword10- b'0:15 - rx_attention_offset: rx_attention_offset in byte units
+ * dword10 - b'0:15 - rx_attention_offset: rx_attention_offset in byte units
  *                    Valid only for HW_TO_SW_RING and SW_TO_HW_RING
  *                    A value of 0 will be considered as ignore this config.
  *                    Refer to BUF_RING_CFG_4 defs within HW .h files,
@@ -4912,6 +4922,7 @@ enum htt_srng_ring_id {
  *                    to source rings. Consumer drops packets if the available
  *                    words in the ring falls below the configured threshold
  *                    value.
+ *        - b'16-31 - rsvd3 for future use
  */
 PREPACK struct htt_rx_ring_selection_cfg_t {
     A_UINT32 msg_type:          8,
@@ -4922,6 +4933,7 @@ PREPACK struct htt_rx_ring_selection_cfg_t {
              rx_offsets_valid:  1,
              drop_thresh_valid: 1,
              rsvd1:             4;
+             rsvd1:             5;
     A_UINT32 ring_buffer_size: 16,
              rsvd2:            16;
     A_UINT32 packet_type_enable_flags_0;
@@ -7128,6 +7140,14 @@ struct htt_rx_ind_hl_rx_desc_t {
             reserved: 1;
     } flags;
     /* NOTE: no reserved space - don't append any new fields here */
+    /* sa_ant_matrix
+     * For cases where a single rx chain has options to be connected to
+     * different rx antennas, show which rx antennas were in use during
+     * receipt of a given PPDU.
+     * This sa_ant_matrix provides a bitmask of the antennas used while
+     * receiving this frame.
+     */
+    A_UINT8 sa_ant_matrix;
 };
 
 #define HTT_RX_IND_HL_RX_DESC_VER_OFFSET \
@@ -7142,6 +7162,10 @@ struct htt_rx_ind_hl_rx_desc_t {
 #define HTT_RX_IND_HL_FLAG_OFFSET \
     (HTT_RX_IND_HL_RX_DESC_BASE_OFFSET \
      + offsetof(struct htt_rx_ind_hl_rx_desc_t, flags))
+
+#define HTT_RX_IND_HL_SA_ANT_MATRIX_OFFSET \
+    (HTT_RX_IND_HL_RX_DESC_BASE_OFFSET \
+     + offsetof(struct htt_rx_ind_hl_rx_desc_t, sa_ant_matrix))
 
 #define HTT_RX_IND_HL_FLAG_FIRST_MSDU   (0x01 << 0)
 #define HTT_RX_IND_HL_FLAG_LAST_MSDU    (0x01 << 1)

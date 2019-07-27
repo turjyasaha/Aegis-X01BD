@@ -631,7 +631,6 @@ static int32_t afe_callback(struct apr_client_data *data, void *priv)
 		}
 		#endif
 		/* Huaqin add for active nxp pa cal function by xudayi at 2018/03/03 end */
-
 			if (sp_make_afe_callback(data->opcode, data->payload,
 						 data->payload_size))
 				return -EINVAL;
