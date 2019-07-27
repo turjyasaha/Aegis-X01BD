@@ -37,7 +37,6 @@
 /** WMI revision number has to be incremented when there is a
  *  change that may or may not break compatibility. */
 #define __WMI_REVISION_ 671
-#define __WMI_REVISION_ 653
 
 /** The Version Namespace should not be normally changed. Only
  *  host and firmware of the same WMI namespace will work
@@ -79,4 +78,3 @@
 #define WMI_ABI_VERSION_NS_1 __NAMESPACE_1_
 #define WMI_ABI_VERSION_NS_2 __NAMESPACE_2_
 #define WMI_ABI_VERSION_NS_3 __NAMESPACE_3_
-

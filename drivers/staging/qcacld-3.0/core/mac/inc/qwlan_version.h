@@ -19,14 +19,11 @@
 #ifndef QWLAN_VERSION_H
 #define QWLAN_VERSION_H
 /*===========================================================================
-
    FILE:
    qwlan_version.h
-
    BRIEF DESCRIPTION:
    WLAN Host Version file.
    Build number automaticly updated by build scripts.
-
    ===========================================================================*/
 
 #define QWLAN_VERSION_MAJOR            5
@@ -36,9 +33,5 @@
 #define QWLAN_VERSION_BUILD            73
 
 #define QWLAN_VERSIONSTR               "5.1.1.73Q"
-#define QWLAN_VERSION_EXTRA            "E"
-#define QWLAN_VERSION_BUILD            72
-
-#define QWLAN_VERSIONSTR               "5.1.1.72E"
 
 #endif /* QWLAN_VERSION_H */

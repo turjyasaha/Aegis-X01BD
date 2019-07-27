@@ -5892,21 +5892,6 @@ typedef enum {
      * 0 - 7  | Param Value
      * 8 - 30 | reserved
      * 31     | Enable/Disable. If set to 0, ignore bits 0-7.
-=======
-     * The accepted values are in between 62 and 95, inclusive.
-     * The parameter value is programmed into the spatial reuse register,
-     * to specify how low the background signal strength from neighboring
-     * BSS cells must be, for this AP to employ spatial reuse.
-     * The value of the parameter is multiplied by -1 to get the
-     * OBSS RSSI threshold, in dBm, below which spatial reuse will
-     * be allowed.
-     * For example, if the parameter value is 62, the target will
-     * allow spatial reuse if the RSSI detected from other BSS
-     * is below -62 dBm.
-     * Similarly, if the parameter value is 80, the target will
-     * allow spatial reuse only if the RSSI detected from neighboring
-     * BSS cells is no more than -80 dBm.
->>>>>>> 9e41580d6c9fb2d5d896fef5ac5403a12d882d00
      */
     WMI_PDEV_PARAM_SET_CMD_OBSS_PD_THRESHOLD,
 
@@ -24504,31 +24489,31 @@ typedef struct {
 } wmi_pdev_set_diversity_gain_cmd_fixed_param;
 
 /* flags for unit_test_event  */
-#define WMI_UNIT_TEST_EVENT_FLAG_STATUS			0   /* 0 = success, 1 = fail */
-#define WMI_UNIT_TEST_EVENT_FLAG_DONE			1   /* 0 = not done, 1 = done  */
+#define WMI_UNIT_TEST_EVENT_FLAG_STATUS         0   /* 0 = success, 1 = fail */
+#define WMI_UNIT_TEST_EVENT_FLAG_DONE           1   /* 0 = not done, 1 = done  */
 
 /* from bit 2 to bit 31 are reserved */
 
-#define WMI_SET_UNIT_TEST_EVENT_FLAG_STATUS_SUCCESS(flag) do {	\
-        (flag) |= (1 << WMI_UNIT_TEST_EVENT_FLAG_STATUS);	\
+#define WMI_SET_UNIT_TEST_EVENT_FLAG_STATUS_SUCCESS(flag) do {  \
+        (flag) |= (1 << WMI_UNIT_TEST_EVENT_FLAG_STATUS);   \
      } while (0)
 
-#define WMI_SET_UNIT_TEST_EVENT_FLAG_STATUS_FAIL(flag) do {	\
-        (flag) &= ~(1 << WMI_UNIT_TEST_EVENT_FLAG_STATUS);	\
+#define WMI_SET_UNIT_TEST_EVENT_FLAG_STATUS_FAIL(flag) do { \
+        (flag) &= ~(1 << WMI_UNIT_TEST_EVENT_FLAG_STATUS);  \
      } while (0)
 
-#define WMI_GET_UNIT_TEST_EVENT_FLAG_STSTUS(flag)		\
+#define WMI_GET_UNIT_TEST_EVENT_FLAG_STSTUS(flag)       \
         ((flag) & (1 << WMI_UNIT_TEST_EVENT_FLAG_STATUS))
 
-#define WMI_SET_UNIT_TEST_EVENT_FLAG_DONE(flag) do {		\
-        (flag) |= (1 << WMI_UNIT_TEST_EVENT_FLAG_DONE);		\
+#define WMI_SET_UNIT_TEST_EVENT_FLAG_DONE(flag) do {        \
+        (flag) |= (1 << WMI_UNIT_TEST_EVENT_FLAG_DONE);     \
      } while (0)
 
-#define WMI_CLR_UNIT_TEST_EVENT_FLAG_DONE(flag) do {		\
-        (flag) &= ~(1 << WMI_UNIT_TEST_EVENT_FLAG_DONE);	\
+#define WMI_CLR_UNIT_TEST_EVENT_FLAG_DONE(flag) do {        \
+        (flag) &= ~(1 << WMI_UNIT_TEST_EVENT_FLAG_DONE);    \
      } while (0)
 
-#define WMI_GET_UNIT_TEST_EVENT_FLAG_DONE(flag)			\
+#define WMI_GET_UNIT_TEST_EVENT_FLAG_DONE(flag)         \
         ((flag) & (1 << WMI_UNIT_TEST_EVENT_FLAG_DONE))
 
 typedef struct {
@@ -25358,8 +25343,6 @@ typedef enum {
  */
 #define WLAN_PDEV_MAX_NUM_BSSID_DISALLOW_LIST  28
 
-=======
->>>>>>> 9e41580d6c9fb2d5d896fef5ac5403a12d882d00
 typedef struct {
     /*
      * The timestamp is in units of ticks of a 19.2MHz clock.

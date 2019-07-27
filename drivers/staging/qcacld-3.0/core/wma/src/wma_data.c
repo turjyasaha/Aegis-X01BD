@@ -1215,7 +1215,6 @@ void wma_set_linkstate(tp_wma_handle wma, tpLinkStateParams params)
 			WMA_LOGP(FL("Failed to fill vdev request for vdev_id %d"),
 				 vdev_id);
 			params->status = false;
-			goto out;
 		}
 
 		status = wma_send_vdev_stop_to_fw(wma, vdev_id);
@@ -2580,7 +2579,6 @@ static void wma_update_tx_send_params(struct tx_send_params *tx_param,
  * Return: true - if category is robust mgmt type
  */
 bool wma_is_rmf_mgmt_action_frame(uint8_t action_category)
-static bool wma_is_rmf_mgmt_action_frame(uint8_t action_category)
 {
 	switch (action_category) {
 	case SIR_MAC_ACTION_SPECTRUM_MGMT:
