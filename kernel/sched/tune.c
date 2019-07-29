@@ -778,6 +778,10 @@ static void schedtune_attach(struct cgroup_taskset *tset)
 	cgroup_taskset_first(tset, &css);
 	st = css_st(css);
 
+	colocate = st->colocate;
+
+	cgroup_taskset_for_each(task, css, tset)
+		sync_cgroup_colocation(task, colocate);
 }
 
 static struct cftype files[] = {
