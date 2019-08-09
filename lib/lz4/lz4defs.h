@@ -61,10 +61,6 @@ typedef struct _U64_S { u64 v; } U64_S;
 	do {						\
 		put_unaligned_le16(v, (u16 *)(p));	\
 		p += 2;					\
-#define LZ4_WRITE_LITTLEENDIAN_16(p, v)	\
-	do {	\
-		put_unaligned(v, (u16 *)(p)); \
-		p += 2; \
 	} while (0)
 #endif
 
@@ -146,8 +142,6 @@ typedef struct _U64_S { u64 v; } U64_S;
 #define LZ4_NBCOMMONBYTES(val) (__builtin_clz(val) >> 3)
 #else
 #define LZ4_NBCOMMONBYTES(val) (__builtin_ctz(val) >> 3)
-#endif
-
 #endif
 
 #endif
