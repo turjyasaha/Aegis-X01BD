@@ -38,7 +38,7 @@ static int zcomp_lz4_decompress(const unsigned char *src, size_t src_len,
 	return lz4_decompress_unknownoutputsize(src, src_len, dst, &dst_len);
 }
 
-struct zcomp_backend zcomp_lz4 = {
+struct zcomp_backend_lz4 zcomp_lz4 = {
 	.compress = zcomp_lz4_compress,
 	.decompress = zcomp_lz4_decompress,
 	.create = zcomp_lz4_create,

@@ -788,11 +788,7 @@ static ssize_t comp_algorithm_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t len)
 {
 	struct zram *zram = dev_to_zram(dev);
-<<<<<<< HEAD
 	char compressor[ARRAY_SIZE(zram->compressor)];
-=======
-	char compressor[CRYPTO_MAX_ALG_NAME];
->>>>>>> f44a2bb4f7a1... UPSTREAM: zram: use crypto api to check alg availability
 	size_t sz;
 
 	strlcpy(compressor, buf, sizeof(compressor));
@@ -811,11 +807,7 @@ static ssize_t comp_algorithm_store(struct device *dev,
 		return -EBUSY;
 	}
 
-<<<<<<< HEAD
 	strcpy(zram->compressor, compressor);
-=======
-	strlcpy(zram->compressor, compressor, sizeof(compressor));
->>>>>>> f44a2bb4f7a1... UPSTREAM: zram: use crypto api to check alg availability
 	up_write(&zram->init_lock);
 	return len;
 }
@@ -1112,21 +1104,11 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
 	}
 	kunmap_atomic(mem);
 
-<<<<<<< HEAD
 compress_again:
 	zstrm = zcomp_stream_get(zram->comp);
 	src = kmap_atomic(page);
 	ret = zcomp_compress(zstrm, src, &comp_len);
 	kunmap_atomic(src);
-=======
-	zstrm = zcomp_stream_get(zram->comp);
-	ret = zcomp_compress(zram->comp, zstrm, uncmem, &clen);
-	if (!is_partial_io(bvec)) {
-		kunmap_atomic(user_mem);
-		user_mem = NULL;
-		uncmem = NULL;
-	}
->>>>>>> 2104ebe09ac5... UPSTREAM: zram: rename zstrm find-release functions
 
 	if (unlikely(ret)) {
 		zcomp_stream_put(zram->comp);
@@ -1171,11 +1153,6 @@ compress_again:
 				__GFP_MOVABLE);
 	if (!handle) {
 		zcomp_stream_put(zram->comp);
-<<<<<<< HEAD
-=======
-		zstrm = NULL;
-
->>>>>>> 2104ebe09ac5... UPSTREAM: zram: rename zstrm find-release functions
 		atomic64_inc(&zram->stats.writestall);
 		handle = zs_malloc(zram->mem_pool, comp_len,
 				GFP_NOIO | __GFP_HIGHMEM |
@@ -1202,16 +1179,6 @@ compress_again:
 	memcpy(dst, src, comp_len);
 	if (comp_len == PAGE_SIZE)
 		kunmap_atomic(src);
-<<<<<<< HEAD
-=======
-	} else {
-		memcpy(cmem, src, clen);
-	}
-
-	zcomp_stream_put(zram->comp);
-	zstrm = NULL;
-	zs_unmap_object(meta->mem_pool, handle);
->>>>>>> 2104ebe09ac5... UPSTREAM: zram: rename zstrm find-release functions
 
 	zcomp_stream_put(zram->comp);
 	zs_unmap_object(zram->mem_pool, handle);
@@ -1279,11 +1246,6 @@ static int zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
 
 	ret = __zram_bvec_write(zram, &vec, index, bio);
 out:
-<<<<<<< HEAD
-=======
-	if (zstrm)
-		zcomp_stream_put(zram->comp);
->>>>>>> 2104ebe09ac5... UPSTREAM: zram: rename zstrm find-release functions
 	if (is_partial_io(bvec))
 		__free_page(page);
 	return ret;

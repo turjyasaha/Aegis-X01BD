@@ -36,39 +36,6 @@ static const char * const backends[] = {
 #endif
 #if IS_ENABLED(CONFIG_CRYPTO_ZSTD)
 	"zstd",
-=======
-#include "zcomp_lzo.h"
-#ifdef CONFIG_ZRAM_LZ4_COMPRESS
-#include "zcomp_lz4.h"
-#endif
-
-/*
- * single zcomp_strm backend
- */
-struct zcomp_strm_single {
-	struct mutex strm_lock;
-	struct zcomp_strm *zstrm;
-};
-
-/*
- * multi zcomp_strm backend
- */
-struct zcomp_strm_multi {
-	/* protect strm list */
-	spinlock_t strm_lock;
-	/* max possible number of zstrm streams */
-	int max_strm;
-	/* number of available zstrm streams */
-	int avail_strm;
-	/* list of available strms */
-	struct list_head idle_strm;
-	wait_queue_head_t strm_wait;
-};
-
-static struct zcomp_backend *backends[] = {
-	&zcomp_lzo,
-#ifdef CONFIG_ZRAM_LZ4_COMPRESS
-	&zcomp_lz4,
 #endif
 	NULL
 };
@@ -152,11 +119,6 @@ ssize_t zcomp_available_show(const char *comp, char *buf)
 
 	sz += scnprintf(buf + sz, PAGE_SIZE - sz, "\n");
 	return sz;
-}
-
-bool zcomp_available_algorithm(const char *comp)
-{
-	return find_backend(comp) != NULL;
 }
 
 struct zcomp_strm *zcomp_stream_get(struct zcomp *comp)
