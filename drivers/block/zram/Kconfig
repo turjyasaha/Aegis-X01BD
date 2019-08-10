@@ -1,8 +1,8 @@
 config ZRAM
 	tristate "Compressed RAM block device support"
 	depends on BLOCK && SYSFS && ZSMALLOC && CRYPTO
-	select CRYPTO_LZO
-	default n
+	select CRYPTO_LZ4
+	default y
 	help
 	  Creates virtual block devices called /dev/zramX (X = 0, 1, ...).
 	  Pages written to these disks are compressed and stored in memory
@@ -19,10 +19,7 @@ config ZRAM_WRITEBACK
        depends on ZRAM
        default n
        help
-	 With incompressible page, there is no memory saving to keep it
-	 in memory. Instead, write it out to backing device.
-	 For this feature, admin should set up backing device via
-	 /sys/block/zramX/backing_dev.
+	 With incompressible page, there is no memory saving to keep it in memory. Instead, config ZRAM_HIDE_LZO bool "Hide LZO compression algorithm in available compression list"write it out to backing device. For this feature, admin should set up backing device via /sys/block/zramX/backing_dev.
 
 	 See Documentation/blockdev/zram.txt for more information.
 
@@ -43,3 +40,10 @@ config ZRAM_LZ4_COMPRESS
 	help
 	  This option enables LZ4 compression algorithm support. Compression
 	  algorithm can be changed using `comp_algorithm' device attribute.
+
+config ZRAM_DEFAULT_COMP_ALGORITHM
+	string "Default ZRAM algorithm"
+	default "CRYPTO_LZ4"
+
+config ZRAM_HIDE_LZO
+	bool "Hide LZO compression algorithm in available compression list"
