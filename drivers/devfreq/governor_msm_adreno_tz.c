@@ -379,7 +379,6 @@ static int tz_init(struct devfreq_msm_adreno_tz_data *priv,
 extern int adreno_idler(struct devfreq_dev_status stats, struct devfreq *devfreq,
 		 unsigned long *freq);
 #endif
-<<<<<<< HEAD
 
 #ifdef CONFIG_SIMPLE_GPU_ALGORITHM
 extern int simple_gpu_active;
@@ -387,8 +386,6 @@ extern int simple_gpu_algorithm(int level, int *val,
 				struct devfreq_msm_adreno_tz_data *priv);
 #endif
 
-=======
->>>>>>> cbb11e769e1e... Introduce Adreno idler for devfreq-based Adreno devices
 static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq,
 								u32 *flag)
 {
