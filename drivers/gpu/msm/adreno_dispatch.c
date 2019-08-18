@@ -288,10 +288,7 @@ static void start_fault_timer(struct adreno_device *adreno_dev)
 static void _retire_timestamp(struct kgsl_drawobj *drawobj)
 {
 	struct kgsl_context *context = drawobj->context;
-<<<<<<< HEAD
 	struct adreno_context *drawctxt = ADRENO_CONTEXT(context);
-=======
->>>>>>> c425052c3ac5... adreno: disable snapshot, coresight and trace
 	struct kgsl_device *device = context->device;
 
 	/*
@@ -315,15 +312,12 @@ static void _retire_timestamp(struct kgsl_drawobj *drawobj)
 	 * rptr scratch out address. At this point GPU clocks turned off.
 	 * So avoid reading GPU register directly for A3xx.
 	 */
-<<<<<<< HEAD
 	if (adreno_is_a3xx(ADRENO_DEVICE(device)))
 		trace_adreno_cmdbatch_retired(drawobj, -1, 0, 0, drawctxt->rb,
 				0, 0);
 	else
 		trace_adreno_cmdbatch_retired(drawobj, -1, 0, 0, drawctxt->rb,
 			adreno_get_rptr(drawctxt->rb), 0);
-=======
->>>>>>> c425052c3ac5... adreno: disable snapshot, coresight and trace
 	kgsl_drawobj_destroy(drawobj);
 }
 
@@ -553,10 +547,7 @@ static int sendcmd(struct adreno_device *adreno_dev,
 	struct kgsl_drawobj *drawobj = DRAWOBJ(cmdobj);
 	struct adreno_gpudev *gpudev = ADRENO_GPU_DEVICE(adreno_dev);
 	struct adreno_dispatcher *dispatcher = &adreno_dev->dispatcher;
-<<<<<<< HEAD
 	struct adreno_context *drawctxt = ADRENO_CONTEXT(drawobj->context);
-=======
->>>>>>> c425052c3ac5... adreno: disable snapshot, coresight and trace
 	struct adreno_dispatcher_drawqueue *dispatch_q =
 				ADRENO_DRAWOBJ_DISPATCH_DRAWQUEUE(drawobj);
 	struct adreno_submit_time time;
@@ -2278,10 +2269,7 @@ static void cmdobj_profile_ticks(struct adreno_device *adreno_dev,
 static void retire_cmdobj(struct adreno_device *adreno_dev,
 		struct kgsl_drawobj_cmd *cmdobj)
 {
-<<<<<<< HEAD
 	struct adreno_dispatcher *dispatcher = &adreno_dev->dispatcher;
-=======
->>>>>>> c425052c3ac5... adreno: disable snapshot, coresight and trace
 	struct kgsl_drawobj *drawobj = DRAWOBJ(cmdobj);
 	struct adreno_context *drawctxt = ADRENO_CONTEXT(drawobj->context);
 	uint64_t start = 0, end = 0;
