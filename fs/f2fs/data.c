@@ -519,7 +519,6 @@ alloc_new:
 	*fio->last_block = fio->new_blkaddr;
 	*fio->bio = bio;
 
->>>>>>> 575d3de9bf4ae67346bc351bab3564656c1c6bc1
 	return 0;
 }
 
