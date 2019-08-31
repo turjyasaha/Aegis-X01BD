@@ -13747,6 +13747,7 @@ void hdd_drv_ops_inactivity_handler(unsigned long arg)
 }
 
 /* Register the module init/exit functions */
+#ifdef MODULE 
 module_init(hdd_module_init);
 module_exit(hdd_module_exit);
 #else
