@@ -12672,16 +12672,6 @@ dev_alloc_err:
 	return -ENODEV;
 }
 
-static void wlan_hdd_state_ctrl_param_destroy(void)
-{
-	cdev_del(&wlan_hdd_state_cdev);
-	device_destroy(class, device);
-	class_destroy(class);
-	unregister_chrdev_region(device, dev_num);
-
-	pr_info("Device node unregistered");
-}
-
 /**
  * __hdd_module_init - Module init helper
  *
